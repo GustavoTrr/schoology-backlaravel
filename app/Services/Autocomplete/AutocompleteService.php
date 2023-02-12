@@ -19,10 +19,10 @@ class AutocompleteService
     public function searchWord(string $substring): array
     {
         //sanitizing
+        $substring = trim($substring);
         if (count(explode(' ', $substring)) > 1) {
             throw new \Exception('Only a single word can be searched on this function', 1);
         }
-        $substring = trim($substring);
 
         $words = $this->client->searchWord($substring);
         return array_slice($words, 0, 5);
