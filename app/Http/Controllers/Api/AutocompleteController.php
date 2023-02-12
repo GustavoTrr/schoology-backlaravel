@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\AutocompleteService;
 use Illuminate\Http\Request;
 
 class AutocompleteController extends Controller
@@ -14,7 +15,13 @@ class AutocompleteController extends Controller
      */
     public function search(Request $request)
     {
-        return 'test ok!';
+        $this->validate($request,['q' => 'string|required']);
+
+        try {
+            return AutocompleteService::SearchWord($request->q);
+        } catch (\Throwable $th) {
+            return json_encode(['error' => $th->getMessage()]);
+        }
     }
 
 }
