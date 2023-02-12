@@ -3,11 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\AutocompleteService;
+use App\Services\Autocomplete\AutocompleteService;
 use Illuminate\Http\Request;
 
 class AutocompleteController extends Controller
 {
+    private AutocompleteService $autocompleteService;
+
+    public function __construct(AutocompleteService $autocompleteService)
+    {
+        $this->autocompleteService = $autocompleteService;
+    }
+
     /**
      * Search for the word that contains the given substring
      *
@@ -15,10 +22,10 @@ class AutocompleteController extends Controller
      */
     public function search(Request $request)
     {
-        $this->validate($request,['q' => 'string|required']);
+        $this->validate($request,['q' => 'bail|required|string|alpha:ascii']);
 
         try {
-            return AutocompleteService::SearchWord($request->q);
+            return $this->autocompleteService->searchWord($request->q);
         } catch (\Throwable $th) {
             return json_encode(['error' => $th->getMessage()]);
         }
