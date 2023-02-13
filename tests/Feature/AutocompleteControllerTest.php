@@ -2,11 +2,22 @@
 
 namespace Tests\Feature\Api;
 
+use App\Services\Autocomplete\AutocompleteService;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Mocks\AutocompleteSourceClientMock;
 
 class AutocompleteControllerTest extends TestCase
 {
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->app->bind(SourceClientInterface::class, AutocompleteSourceClientMock::class);
+        $this->app->bind(AutocompleteService::class, function ($app) {
+            return new AutocompleteService($app->make(SourceClientInterface::class));
+        });
+    }
 
     /**
      * Test search method for correct response.
